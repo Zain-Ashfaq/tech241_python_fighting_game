@@ -1,61 +1,100 @@
-import random
+from random import randint
 
-character_dict = {
-    "Sorcerer":{"health":150,"damage":15},
-    "Barbarian":{"health":80,"damage":30},
-    "Rogue":{"health":120,"damage":25},
-    "Necromancer":{"health":20,"damage":65},
-    "Druid":{"health":50,"damage":15},
 
-}
-character_list_num=len(character_dict)
-def player_name(num):
+characters = [
+    {"name": "Sorcerer", "health": 100, "damage": [10, 25]},
+    {"name": "Barbarian", "health": 150, "damage": [5, 15]},
+    {"name": "Rogue", "health": 80, "damage": [15, 20]},
+    {"name": "Necromancer", "health": 120, "damage": [10, 20]},
+    {"name": "Druid", "health": 90, "damage": [15, 25]}
+]
 
-    if num==1:
-        return input("Player 1: what is your name?")
+
+def select_character(player_num):
+    # Let the player select a character
+    if player_num == 1:
+        player_name = input("Player 1, enter your name: ")
+        print(f"{player_name}, select your character:")
     else:
-        return input("Player 2: what is your name?")
-def rand_character():
-    random_character = random.choice(list(character_dict.keys()))
+        player_name = input("Player 2, enter your name: ")
+        print(f"{player_name}, select your character:")
 
-    random_character_stats = character_dict[random_character]
-    char_list=[random_character,random_character_stats]
+    choice = None
+    while not choice:
+        for i in range(len(characters)):
+            character = characters[i]
+            print(
+                f"{i + 1}. {character['name']} (Health: {character['health']}, Damage: {character['damage'][0]}-{character['damage'][1]})")
 
-    # print("Random character:", random_character)
-    # print("Health:", random_character_stats["health"])
-    # print("Damage:", random_character_stats["damage"])
+        choice = int(input("Enter the number of your choice: "))
 
-    return char_list
-
-def print_character(char_list):
-    character_name = char_list[0]
-    character_stats = char_list[1]
-
-    print("Character:", character_name)
-    for stat, value in character_stats.items():
-        print(f"{stat}: {value}")
+        if 1 <= choice <= len(characters):
+            return {"player_name": player_name, "character": characters[choice - 1]}
+        else:
+            print("Invalid choice. Please try again.")
+            choice = None
 
 
+def fight(player1, player2):
+    print(player1," SIUUUU")
 
+    print(
+        f"{player1['player_name']} ({player1['character']['name']}) and {player2['player_name']} ({player2['character']['name']}) are fighting!")
+
+    # get the health and damage values for each player
+    player1_health = player1['character']['health']
+    player1_damage = player1['character']['damage']
+    player2_health = player2['character']['health']
+    player2_damage = player2['character']['damage']
+
+
+    while player1_health > 0 and player2_health > 0:
+
+
+        input("Press Enter to continue...")
+        player1_attack = randint(player1_damage[0], player1_damage[1])
+        player2_health -= player1_attack
+        print(
+            f"{player1['player_name']} ({player1['character']['name']}) attacks {player2['player_name']} ({player2['character']['name']}) for {player1_attack} damage. {player2['player_name']}'s health: {player2_health}")
+
+        # check if player 2 is dead
+        if player2_health <= 0:
+            print(f"{player2['player_name']} ({player2['character']['name']}) is dead")
+            break
+
+
+        input("Press any key to continue")
+        player2_attack = randint(player2_damage[0], player2_damage[1])
+        player1_health -= player2_attack
+        print(
+            f"{player2['player_name']} ({player2['character']['name']}) attacks {player1['player_name']} ({player1['character']['name']}) for {player2_attack} damage. {player1['player_name']}'s health: {player1_health}")
+
+
+        if player1_health <= 0:
+            print(f"{player1['player_name']} ({player1['character']['name']}) is dead")
+
+    if player1_health < 0:
+        player1_health = 0
+    if player2_health < 0:
+        player2_health = 0
+    # determine who won
+    if player1_health > player2_health:
+        print(f"The winner is {player1['player_name']} ({player1['character']['name']})")
+    else:
+        print(f"The winner is {player2['player_name']} ({player2['character']['name']})")
+
+
+# main game loop
 def main():
+    while True:
+        print("Choose your fighters")
+        player1 = select_character(1)
+        player2 = select_character(2)
+        fight(player1, player2)
 
-
-    is_player_ones_turn = True
-    # player_one_name = player_name(1)
-    # player_two_name = player_name(2)
-    # print(player_two_name,player_one_name)
-    player_one_character=rand_character()
-    player_two_character=rand_character()
-    print("player one is:")
-    print_character(player_one_character)
-    print("\nplayer two is:")
-    print_character(player_two_character)
-
-
-
-
-
-
+        play_again = input("Do you want to play again? (y/n): ")
+        if play_again.lower() != "y":
+            break
 
 
 main()
